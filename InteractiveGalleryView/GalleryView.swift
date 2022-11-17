@@ -15,8 +15,8 @@ class GalleryView: UIScrollView {
 	//
 	
 	fileprivate var isConstraints : Bool = false
-	fileprivate var imageHeight : CGFloat = 0.0
-	fileprivate var imageWidth : CGFloat = 0.0
+	fileprivate var imageHeight : CGFloat = 0.6
+	fileprivate var imageWidth : CGFloat = 1.0
 	fileprivate var viewState : ViewState = ViewState.visible
 
 	internal var isZoomed : Bool {
@@ -105,7 +105,11 @@ class GalleryView: UIScrollView {
 			}).disposed(by: disposeBag)
 	}
 	
-	public func setImage(image : UIImage, width : CGFloat, height : CGFloat) {
+	public func setImageView(image : UIImage) {
+		imageView = DraggableImageView(image: image)
+	}
+	
+	public func setImageView(image : UIImage, width : CGFloat, height : CGFloat) {
 		imageView = DraggableImageView(image: image)
 		imageWidth = width
 		imageHeight = height

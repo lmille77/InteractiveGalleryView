@@ -1,6 +1,6 @@
 //
 //  ViewController.swift
-//  InteractiveGalleryView
+//  WhiteStarGalleryView
 //
 //  Created by Logan Miller on 11/11/22.
 //
@@ -15,10 +15,11 @@ class ViewController: UIViewController, UIScrollViewDelegate {
 	let maximumZoom = 3.0
 	
 	var galleryView = GalleryView()
+	var middleView = UIView()
 	var baseView = UIView()
 	
 	fileprivate var disposeBag = DisposeBag()
-
+	
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		setupViewController()
@@ -34,7 +35,7 @@ class ViewController: UIViewController, UIScrollViewDelegate {
 		singleTap.cancelsTouchesInView = true
 		singleTap.require(toFail: doubleTap)
 		self.baseView.addGestureRecognizer(singleTap)
-
+		
 		self.galleryView.minimumZoomScale = minimumZoom
 		self.galleryView.maximumZoomScale = maximumZoom
 		self.galleryView.zoomScale = minimumZoom
@@ -47,7 +48,13 @@ class ViewController: UIViewController, UIScrollViewDelegate {
 		baseView.addSubview(imageView)
 		imageView.edgesToSuperview()
 		
-		galleryView.setImage(image: UIImage(named: "Yoko.png")!, width: 1.0, height: 0.6)
+		baseView.addSubview(middleView)
+		middleView.translatesAutoresizingMaskIntoConstraints = false
+		middleView.backgroundColor = .black
+		middleView.isHidden = true
+		middleView.edgesToSuperview()
+		
+		galleryView.setImageView(image: UIImage(named: "Yoko.png")!, width: 1.0, height: 0.6)
 		self.baseView.addSubview(galleryView)
 		galleryView.edgesToSuperview()
 		
@@ -88,6 +95,7 @@ class ViewController: UIViewController, UIScrollViewDelegate {
 	
 	func scrollViewDidZoom(_ scrollView: UIScrollView) {
 		galleryView.isZoomed = !galleryView.isZoomed
+		updateBaseViewBackground()
 		centerScrollViewContents()
 	}
 	
@@ -111,10 +119,10 @@ class ViewController: UIViewController, UIScrollViewDelegate {
 	
 	@objc func handleDoubleTap(_ sender: UITapGestureRecognizer) {
 		let zoomScale = min(galleryView.zoomScale * 4, galleryView.maximumZoomScale)
-
+		
 		if zoomScale != galleryView.zoomScale {
 			let touchPoint = sender.location(in: galleryView.baseView)
-
+			
 			let gallerySize = galleryView.frame.size
 			let newSize = CGSize(width: gallerySize.width / zoomScale,
 								 height: gallerySize.height / zoomScale)
@@ -128,7 +136,7 @@ class ViewController: UIViewController, UIScrollViewDelegate {
 	
 	//TODO: For demo purposes only, toggles between the galleryView being active
 	@objc func handleSingleTap(_ sender: UITapGestureRecognizer) {
-		guard !galleryView.isPanning else { return }
+		guard !galleryView.isPanning, !galleryView.isZoomed else { return }
 		
 		switch(galleryView.getViewState()) {
 		case .hidden:
@@ -136,6 +144,10 @@ class ViewController: UIViewController, UIScrollViewDelegate {
 		case .visible:
 			galleryView.viewStateOutput.onNext(.hidden)
 		}
+	}
+	
+	fileprivate func updateBaseViewBackground() {
+		galleryView.isZoomed == true ? (middleView.isHidden = false) : (middleView.isHidden = true)
 	}
 }
 
