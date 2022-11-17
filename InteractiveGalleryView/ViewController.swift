@@ -94,9 +94,14 @@ class ViewController: UIViewController, UIScrollViewDelegate {
 	}
 	
 	func scrollViewDidZoom(_ scrollView: UIScrollView) {
-		galleryView.isZoomed = !galleryView.isZoomed
-		updateBaseViewBackground()
+		self.middleView.isHidden = false
 		centerScrollViewContents()
+	}
+	
+	func scrollViewDidEndZooming(_ scrollView: UIScrollView, with view: UIView?, atScale scale: CGFloat) {
+		if galleryView.zoomScale == minimumZoom {
+			middleView.isHidden = true
+		}
 	}
 	
 	func centerScrollViewContents() {
@@ -144,10 +149,6 @@ class ViewController: UIViewController, UIScrollViewDelegate {
 		case .visible:
 			galleryView.viewStateOutput.onNext(.hidden)
 		}
-	}
-	
-	fileprivate func updateBaseViewBackground() {
-		galleryView.isZoomed == true ? (middleView.isHidden = false) : (middleView.isHidden = true)
 	}
 }
 
