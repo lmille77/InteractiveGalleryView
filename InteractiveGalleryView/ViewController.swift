@@ -101,6 +101,9 @@ class ViewController: UIViewController, UIScrollViewDelegate {
 	func scrollViewDidEndZooming(_ scrollView: UIScrollView, with view: UIView?, atScale scale: CGFloat) {
 		if galleryView.zoomScale == minimumZoom {
 			middleView.isHidden = true
+			galleryView.isZoomed = false
+		} else {
+			galleryView.isZoomed = true
 		}
 	}
 	
